@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-
 import "./styles.css";
 import api from './services/api'
 
 function App() {
   const { repositories, setRepositories } = useState([])
-  const { i, setI } = useState(1)
+  //const { i, setI } = useState(1)
 
   useEffect(() => {
     api.get('repositories').then(response => {
@@ -15,25 +14,29 @@ function App() {
 
   async function handleAddRepository() {
     // TODO
-    const repoNew = {
-      title: `Desafio ${i}`, url: "gostack01.com", techs: "Renan Urata"
+    let repoNew = {
+      id: "123",
+      url: "https://github.com/josepholiveira",
+      title: "Desafio ReactJS",
+      techs: ["React", "Node.js"],
     }
     const response = await api.post('repositories', repoNew)
-    setRepositories([...repositories, repoNew])
-    setI(i + 1)
+    setRepositories([ ...repositories, response.data ])
+    // setI(i + 1)
   }
 
   async function handleRemoveRepository(id) {
     // TODO
-    api.delete(`repositories/${id}`)
-    // const deletedRepo = [...repositories].splice(id, 1)
-    // setRepositories([deletedRepo])
+    await api.delete(`repositories/${id}`)
+    setRepositories(repositories.filter(
+      repo => repo.id !== id
+    ))
   }
 
   return (
     <div>
       <ul data-testid="repository-list">
-        {repositories.map(
+        {repositories && repositories.map(
           repo => (
             <li key={repo.id}>
               {repo.title}
